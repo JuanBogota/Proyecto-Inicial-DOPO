@@ -14,7 +14,7 @@ public class SilkRoad {
     private ArrayList<Store> stores;
     private ArrayList<Road> roads;
     private int length;
-    private String days;
+    private int days;
 
     /**
     * Constructor for objects of class SilkRoad
@@ -25,9 +25,40 @@ public class SilkRoad {
         stores = new ArrayList<Store>();
         roads = new ArrayList<Road>();
         this.length = Math.max(0, length);
-        this.days = null;
-        //ciclo 3
-        
+        this.days = 0;
+            // Límites de la espiral
+        int left = 0, right = (int)Math.ceil(Math.sqrt(length)) - 1;
+        int top = 0, bottom = right;
+        int x = 0, y = 0;
+        int dir = 0; // 0: derecha, 1: abajo, 2: izquierda, 3: arriba
+
+        for(int i = 0; i < length; i++){
+            Road road = new Road();
+            roads.add(road);
+            road.makeVisible();
+            road.getStreet().moveHorizontal(x * 40);
+            road.getStreet().moveVertical(y * 40);
+
+            // Cambia dirección y límites
+            switch(dir){
+                case 0: // Derecha
+                    if(x < right) x++;
+                    else { dir = 1; top++; y++; }
+                    break;
+                case 1: // Abajo
+                    if(y < bottom) y++;
+                    else { dir = 2; right--; x--; }
+                    break;
+                case 2: // Izquierda
+                    if(x > left) x--;
+                    else { dir = 3; bottom--; y--; }
+                    break;
+                case 3: // Arriba
+                    if(y > top) y--;
+                    else { dir = 0; left++; x++; }
+                    break;
+            }
+        }   
     }
     
     /**
@@ -92,6 +123,91 @@ public class SilkRoad {
                 robots.get(i).makeInvisible();
                 robots.remove(i);
                 break;
+            }
+        }
+    }
+
+    /**
+     * Moves a robot at a given location by a specified number of meters.
+     * @param location the position of the robot to be moved
+     * @param meters the number of meters to move the robot
+     */
+    public void moveRobots(int location, int meters){
+        for(Robot robot : robots) {
+        if(robot.getLocation() == location) {
+            try {
+                // Si meters es positivo, mover el robot hacia adelante
+                for(int i = 0; i < Math.abs(meters); i++) {
+                    robot.moveTo();
+                }
+            } catch(SilkRoadException e) {
+                System.out.println("Error al mover el robot: " + e.getMessage());
+                break;
+                }
+            }
+        }
+    }
+
+    /**
+     * Resupplies all stores on the Silk Road
+     */
+    public void resupplyStores(){
+        for(Store store : stores){
+            store.resupply();
+        }
+    }   
+
+    /**
+     * Reboots all robots to their initial positions
+     */
+    public void reboot(){
+        for(Robot robot : robots){
+            robot.rebootRobot();
+        }
+        for(Store store : stores){
+            store.rebootStore();
+        }
+    }
+
+
+    /**
+     * Returns the list of robots on the Silk Road.
+     * @return the list of robots
+     */
+    public ArrayList<Robot> getRobots(){
+        return robots;
+    }
+
+    /**
+     * Returns the list of stores on the Silk Road.
+     * @return the list of stores
+     */
+    public ArrayList<Store> getStores(){
+        return stores;
+    }
+
+    /**
+     * Returns the list of roads on the Silk Road.
+     * @return the list of roads
+     */
+    public ArrayList<Road> getRoads(){
+        return roads;
+    }
+    
+    /**
+     * Sorts an array of robots by their current location in ascending order.
+     * 
+     * @param robots array of robots to sort
+     */
+    public static void orderRobots(Robot[] robots) {
+        int n = robots.length;
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = 0; j < n - i - 1; j++) {
+                if (robots[j].getLocation() > robots[j + 1].getLocation()) {
+                    Robot temp = robots[j];
+                    robots[j] = robots[j + 1];
+                    robots[j + 1] = temp;
+                }
             }
         }
     }
