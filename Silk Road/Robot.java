@@ -63,20 +63,9 @@ public class Robot {
     }
 
     /**
-     * Moves the robot by a given number of meters.
-     * Positive values move to the right, negative to the left.
-     * 
-     * @param meters the number of meters to move
-     */
-    public void moveTo(int meters) {
-        this.location += meters;
-        this.distanceTraveled += Math.abs(meters);
-    }
-
-    /**
      * Resets the robot to its initial position and clears the traveled distance.
      */
-    public void resetToInitialPosition() {
+    public void rebootRobot() {
         this.location = initialPosition;
         this.distanceTraveled = 0;
     }
@@ -119,8 +108,6 @@ public class Robot {
         this.isVisible = true;
     }
 
-    
-
     /**
      * Increases the number of collected tenges by one.
      * Useful when tenges are collected individually.
@@ -130,11 +117,24 @@ public class Robot {
     }
 
     /**
+     * Moves the robot one unit to the right, increases distance traveled,
+     * and decreases tenges by one.
+     */
+    public void moveTo() throws SilkRoadException {
+        if (this.tenges <= 0) {
+            throw new SilkRoadException(SilkRoadException.DOES_NOT_HAVE_ENOUGH_TENGES);
+        }
+        this.location += 1;
+        this.distanceTraveled += 1;
+        this.tenges -= 1;
+    }
+
+    /**
      * Sorts an array of robots by their current location in ascending order.
      * 
      * @param robots array of robots to sort
      */
-    public static void ordenarRobots(Robot[] robots) {
+    public static void orderRobots(Robot[] robots) {
         int n = robots.length;
         for (int i = 0; i < n - 1; i++) {
             for (int j = 0; j < n - i - 1; j++) {
@@ -145,5 +145,22 @@ public class Robot {
                 }
             }
         }
+    }
+
+    /**
+     * To order an array of stores based on their location using bubble sort.
+     * @param stores
+     */
+    public static void ordenarStores(Store[] stores) {
+        int n = stores.length;
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = 0; j < n - i - 1; j++) {
+                if (stores[j].getLocation() > stores[j + 1].getLocation()) {
+                    Store temp = stores[j];
+                    stores[j] = stores[j + 1];
+                    stores[j + 1] = temp;
+                    }
+                }
+            }
     }
 }

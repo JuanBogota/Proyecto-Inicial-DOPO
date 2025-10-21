@@ -50,6 +50,22 @@ public class Store{
     }
 
     /**
+     * Returns the initial position of the store.
+     * @return the initial position of the store
+     */
+    public int getInitialPosition(){
+        return initialPosition;
+    }
+
+    /**
+     * Returns the initial amount of tenges in the store.
+     * @return the initial amount of tenges
+     */
+    public int getInitialTenges(){
+        return initialTenges;
+    }
+
+    /**
      * Resupplies the store with 100 additional tenges.
      */
     public void resupply(){
@@ -64,18 +80,22 @@ public class Store{
         isVisible = false;
     }
 
-
-    public static void ordenarStores(Store[] stores) {
-        int n = stores.length;
-        for (int i = 0; i < n - 1; i++) {
-            for (int j = 0; j < n - i - 1; j++) {
-                if (stores[j].getLocation() > stores[j + 1].getLocation()) {
-                    Store temp = stores[j];
-                    stores[j] = stores[j + 1];
-                    stores[j + 1] = temp;
-                    }
-                }
-            }
+    /**
+     * Make this store visible.
+     */
+    public void makeVisible(){
+        size.makeVisible();
+        isVisible = true;
     }
+
+    /**
+     * Reboots the store to its initial position and tenges.
+     */
+    public void rebootStore(){
+        this.location = initialPosition;
+        this.tenges = initialTenges;
+    }
+
+
 }   
 

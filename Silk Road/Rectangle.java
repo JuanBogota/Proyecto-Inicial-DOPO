@@ -211,4 +211,32 @@ public class Rectangle{
     public int getHeight() {
         return height;
     }
+
+    /**
+     * Get the x position of the rectangle.
+     * @return the x position
+     */
+    public int getXPosition() {
+        return xPosition;
+    }
+
+    /**
+     * Get the y position of the rectangle.
+     * @return the y position
+     */
+    public int getYPosition() {
+        return yPosition;
+    }
+
+    /**
+     * Move the rectangle to a new position.
+     * @param x the new x position
+     * @param y the new y position
+     */
+    public void chagePosition(int x, int y) {
+        erase();
+        this.xPosition = x;
+        this.yPosition = y;
+        draw();
+    }
 }
