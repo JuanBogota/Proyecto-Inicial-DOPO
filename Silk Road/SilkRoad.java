@@ -15,6 +15,7 @@ public class SilkRoad {
     private ArrayList<Road> roads;
     private int length;
     private int days;
+    private boolean lastOperationOk;
 
     /**
     * Constructor for objects of class SilkRoad
@@ -26,48 +27,8 @@ public class SilkRoad {
         roads = new ArrayList<Road>();
         this.length = Math.max(0, length);
         this.days = 0;
-            // Límites de la espiral
-        int left = 0, right = (int)Math.ceil(Math.sqrt(length)) - 1;
-        int top = 0, bottom = right;
-        int x = 0, y = 0;
-        int dir = 0; // 0: derecha, 1: abajo, 2: izquierda, 3: arriba
-
-        for(int i = 0; i < length; i++){
-            Road road = new Road();
-            roads.add(road);
-            road.makeVisible();
-            road.getStreet().moveHorizontal(x * 40);
-            road.getStreet().moveVertical(y * 40);
-
-            // Cambia dirección y límites
-            switch(dir){
-                case 0: // Derecha
-                    if(x < right) x++;
-                    else { dir = 1; top++; y++; }
-                    break;
-                case 1: // Abajo
-                    if(y < bottom) y++;
-                    else { dir = 2; right--; x--; }
-                    break;
-                case 2: // Izquierda
-                    if(x > left) x--;
-                    else { dir = 3; bottom--; y--; }
-                    break;
-                case 3: // Arriba
-                    if(y > top) y--;
-                    else { dir = 0; left++; x++; }
-                    break;
-            }
-        }   
     }
     
-    /**
-     * Returns the length of the Silk Road.
-     * @return the length of the Silk Road
-     */
-    public int getLength(){
-        return length;
-    }
 
     /**
      * Places a store at a given location with a specified amount of tenges.
@@ -75,11 +36,13 @@ public class SilkRoad {
      * @param location the position of the store on the road
      * @param tenges the initial amount of tenges in the store
      */
-    public void placeStore(int location, int tenges){
-        int initialPosition = location;
-        int initialTenges = tenges;
-        Store store = new Store(initialPosition, initialTenges);
-        stores.add(store);
+    public void placeStore(int location, int tenges) {
+        lastOperationOk = false;
+        if (location >= 0 && location <= length && tenges >= 0) {
+            Store store = new Store(location, tenges);
+            stores.add(store);
+            lastOperationOk = true;
+        }
     }
 
     /**
@@ -88,11 +51,12 @@ public class SilkRoad {
      * @param location the position of the store to be removed
      * @param tenges the amount of tenges in the store to be removed
      */
-    public void removeStore(int location, int tenges){
-        for(int i = 0; i < stores.size(); i++){
-            if(stores.get(i).getLocation() == location){
-                stores.get(i).makeInvisible();
+    public void removeStore(int location) {
+        lastOperationOk = false;
+        for(int i = 0; i < stores.size(); i++) {
+            if(stores.get(i).getLocation() == location) {
                 stores.remove(i);
+                lastOperationOk = true;
                 break;
             }
         }
@@ -103,12 +67,20 @@ public class SilkRoad {
      * 
      * @param location the position of the robot on the road
      */
-    public void placeRobot(int location){
-        for(int i = 0; i < robots.size(); i++){
-            if(robots.get(i).getLocation() != location){
+    public void placeRobot(int location) {
+        lastOperationOk = false;
+        if (location >= 0 && location <= length) {
+            boolean positionOccupied = false;
+            for(Robot robot : robots) {
+                if(robot.getLocation() == location) {
+                    positionOccupied = true;
+                    break;
+                }
+            }
+            if (!positionOccupied) {
                 Robot robot = new Robot(location);
                 robots.add(robot);
-                break;
+                lastOperationOk = true;
             }
         }
     }
@@ -117,11 +89,12 @@ public class SilkRoad {
      * Removes a robot at a given location.
      * @param location the position of the robot to be removed
      */
-    public void removeRobot(int location){
-        for(int i = 0; i < robots.size(); i++){
-            if(robots.get(i).getLocation() == location){
-                robots.get(i).makeInvisible();
+    public void removeRobot(int location) {
+        lastOperationOk = false;
+        for(int i = 0; i < robots.size(); i++) {
+            if(robots.get(i).getLocation() == location) {
                 robots.remove(i);
+                lastOperationOk = true;
                 break;
             }
         }
@@ -132,17 +105,19 @@ public class SilkRoad {
      * @param location the position of the robot to be moved
      * @param meters the number of meters to move the robot
      */
-    public void moveRobots(int location, int meters){
+    public void moveRobot(int location, int meters) {
+        lastOperationOk = false;
         for(Robot robot : robots) {
-        if(robot.getLocation() == location) {
-            try {
-                // Si meters es positivo, mover el robot hacia adelante
-                for(int i = 0; i < Math.abs(meters); i++) {
-                    robot.moveTo();
-                }
-            } catch(SilkRoadException e) {
-                System.out.println("Error al mover el robot: " + e.getMessage());
-                break;
+            if(robot.getLocation() == location) {
+                try {
+                    for(int i = 0; i < Math.abs(meters); i++) {
+                        robot.moveTo();
+                    }
+                    lastOperationOk = true;
+                    break;
+                } catch(SilkRoadException e) {
+                    System.out.println("Error al mover el robot: " + e.getMessage());
+                    break;
                 }
             }
         }
@@ -151,24 +126,133 @@ public class SilkRoad {
     /**
      * Resupplies all stores on the Silk Road
      */
-    public void resupplyStores(){
-        for(Store store : stores){
-            store.resupply();
+    public void resupplyStores() {
+        lastOperationOk = false;
+        try {
+            for(Store store : stores) {
+                store.resupply();
+            }
+            lastOperationOk = true;
+        } catch(Exception e) {
+            System.out.println("Error al reabastecer las tiendas: " + e.getMessage());
         }
     }   
 
     /**
-     * Reboots all robots to their initial positions
+     * Returns all robots to their starting positions
      */
-    public void reboot(){
-        for(Robot robot : robots){
-            robot.rebootRobot();
-        }
-        for(Store store : stores){
-            store.rebootStore();
+    public void returnRobots() {
+        lastOperationOk = false;
+        try {
+            for(Robot robot : robots) {
+                robot.rebootRobot();
+            }
+            lastOperationOk = true;
+        } catch(Exception e) {
+            System.out.println("Error al retornar los robots: " + e.getMessage());
         }
     }
 
+    /**
+     * Reboots all robots to their initial positions
+     */
+    public void reboot() {
+        lastOperationOk = false;
+        try {
+            for(Robot robot : robots) {
+                robot.rebootRobot();
+                robot.resetCollectedTenges();
+            }
+            for(Store store : stores) {
+                store.resupply();
+            }
+            lastOperationOk = true;
+        } catch(Exception e) {
+            System.out.println("Error al reiniciar el sistema: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Calculates the profits for all robots on the Silk Road
+     */
+    public int porfit(){
+        int totalProfit = 0;
+        for(Robot robot : robots){
+            totalProfit += robot.getProfit();
+        }
+        return totalProfit;
+    }
+
+    /**
+     * Returns a 2D array with the location and tenges of each store.
+     * @return a 2D array with store data
+     */
+    public int[][] stores(){
+        int[][] storeData = new int[stores.size()][2];
+        for(int i = 0; i < stores.size(); i++){
+            storeData[i][0] = stores.get(i).getLocation();
+            storeData[i][1] = stores.get(i).getTenges();
+        }
+        return storeData;
+    }   
+
+    /**
+     * Returns a 2D array with the location and profit of each robot.
+     * @return a 2D array with robot data
+     */
+    public int[][] robots(){
+        int[][] robotData = new int[robots.size()][2];
+        for(int i = 0; i < robots.size(); i++){
+            robotData[i][0] = robots.get(i).getLocation();
+            robotData[i][1] = robots.get(i).getProfit();
+        }
+        return robotData;
+    }
+
+    /**
+     * Makes all robots and stores invisible.
+     */
+    public void makeInvisible(){
+        for(Robot robot : robots){
+            robot.makeInvisible();
+        }
+        for(Store store : stores){
+            store.makeInvisible();
+        }
+    }
+
+    /**
+     * Makes all robots and stores visible.
+     */
+    public void makeVisible(){
+        for(Robot robot : robots){
+            robot.makeVisible();
+        }
+        for(Store store : stores){
+            store.makeVisible();
+        }
+    }
+
+    /**
+     * Method to finish the simulator.
+     */
+    public void finishSimulator(){
+        days += 1;
+        for(Robot robot : robots){
+            robot.finishDay();
+        }
+        for(Store store : stores){
+            store.finishDay();
+        }
+    }
+
+    /**
+     * Indicates whether the last operation was successfully completed
+     * @return true if the last operation was successful, false otherwise
+     */
+    public boolean ok(){
+        return lastOperationOk;
+    }
 
     /**
      * Returns the list of robots on the Silk Road.
@@ -194,6 +278,14 @@ public class SilkRoad {
         return roads;
     }
     
+     /**
+     * Returns the length of the Silk Road.
+     * @return the length of the Silk Road
+     */
+    public int getLength(){
+        return length;
+    }
+
     /**
      * Sorts an array of robots by their current location in ascending order.
      * 

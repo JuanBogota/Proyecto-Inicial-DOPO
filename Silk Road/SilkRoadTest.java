@@ -1,9 +1,11 @@
-import static org.junit.jupiter.api.Assertions.*;
-
+import static org.junit.Assert.*;
 import java.beans.Transient;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import org.junit.jupiter.api.Test;
+import static org.junit.Assert.*;
+import org.junit.After;
+import org.junit.Before;
 
 /**
  * Unit tests for the SilkRoad class.
@@ -85,7 +87,7 @@ public class SilkRoadTest {
         ArrayList<Store> stores = silkRoad.getStores();
         assertEquals(1, stores.size());
         assertEquals(2, stores.get(0).getLocation());
-        assertEquals(50, stores.get(0).getTenges());
+        assertEquals(50, stores.get(0).getTenges()); //solo un assert por test
     }
 
     /**
