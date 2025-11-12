@@ -16,19 +16,84 @@ public class SilkRoad {
     private int length;
     private int days;
     private boolean lastOperationOk;
+    private int robotColorIndex;
+    private int storeColorIndex;
+    private static final String[] COLORS = {
+        "red", "black", "blue", "green", "yellow", "orange", "cyan", "magenta", "grey", "white"
+    };
 
     /**
     * Constructor for objects of class SilkRoad
     */
     public SilkRoad(int length){
-
         robots = new ArrayList<Robot>();
         stores = new ArrayList<Store>();
         roads = new ArrayList<Road>();
         this.length = Math.max(0, length);
         this.days = 0;
+        this.robotColorIndex = 0;
+        this.storeColorIndex = 0;
+        generateRoadSpiral();
     }
     
+    /**
+     * Generates a spiral road layout for the Silk Road.
+     */
+    private void generateRoadSpiral(){
+        int x = 50;
+        int y = 50;
+        int dx = 50;
+        int dy = 0;
+        int segmentLength = 1;
+        int segmentPassed = 0;
+        
+        for (int i = 0; i < length; i++) {
+            Road road = new Road();
+            int currentX = road.getStreet().getXPosition();
+            int currentY = road.getStreet().getYPosition();
+            road.moveHorizontal(x - currentX);
+            road.moveVertical(y - currentY);
+            if (dy != 0) {
+                road.rotateRoad();
+            }
+            
+            roads.add(road);
+        
+            x += dx;
+            y += dy;
+            segmentPassed++;
+            
+            if (segmentPassed == segmentLength) {
+                segmentPassed = 0;
+                int temp = dx;
+                dx = -dy;
+                dy = temp;
+                if (dy == 0) {
+                    segmentLength++;
+                }
+            }
+        }
+    }
+
+        /**
+     * Gets the next color for a robot.
+     * @return the next available color
+     */
+    private String getNextRobotColor() {
+        String color = COLORS[robotColorIndex % COLORS.length];
+        robotColorIndex++;
+        return color;
+    }
+    
+    /**
+     * Gets the next color for a store.
+     * @return the next available color
+     */
+    private String getNextStoreColor() {
+        String color = COLORS[storeColorIndex % COLORS.length];
+        storeColorIndex++;
+        return color;
+    }
 
     /**
      * Places a store at a given location with a specified amount of tenges.
@@ -39,6 +104,7 @@ public class SilkRoad {
     public void placeStore(int location, int tenges) {
         lastOperationOk = false;
         if (location >= 0 && location <= length && tenges >= 0) {
+            String color = getNextStoreColor();
             Store store = new Store(location, tenges);
             stores.add(store);
             lastOperationOk = true;
@@ -78,6 +144,7 @@ public class SilkRoad {
                 }
             }
             if (!positionOccupied) {
+                String color = getNextRobotColor();
                 Robot robot = new Robot(location);
                 robots.add(robot);
                 lastOperationOk = true;
@@ -219,6 +286,9 @@ public class SilkRoad {
         for(Store store : stores){
             store.makeInvisible();
         }
+        for(Road road : roads){
+            road.makeInvisible();
+        }
     }
 
     /**
@@ -231,18 +301,27 @@ public class SilkRoad {
         for(Store store : stores){
             store.makeVisible();
         }
+        for(Road road : roads){
+            road.makeVisible();
+        }
     }
 
     /**
      * Method to finish the simulator.
      */
-    public void finishSimulator(){
-        days += 1;
-        for(Robot robot : robots){
-            robot.finishDay();
-        }
-        for(Store store : stores){
-            store.finishDay();
+    public void finish(){
+        lastOperationOk = false;
+        try {
+            makeInvisible();
+            robots.clear();
+            stores.clear();
+            roads.clear();
+            days = 0;
+            robotColorIndex = 0;
+            storeColorIndex = 0;
+            lastOperationOk = true;
+        } catch(Exception e) {
+            System.out.println("Error al finalizar el simulador: " + e.getMessage());
         }
     }
 
@@ -284,23 +363,5 @@ public class SilkRoad {
      */
     public int getLength(){
         return length;
-    }
-
-    /**
-     * Sorts an array of robots by their current location in ascending order.
-     * 
-     * @param robots array of robots to sort
-     */
-    public static void orderRobots(Robot[] robots) {
-        int n = robots.length;
-        for (int i = 0; i < n - 1; i++) {
-            for (int j = 0; j < n - i - 1; j++) {
-                if (robots[j].getLocation() > robots[j + 1].getLocation()) {
-                    Robot temp = robots[j];
-                    robots[j] = robots[j + 1];
-                    robots[j + 1] = temp;
-                }
-            }
-        }
     }
 }

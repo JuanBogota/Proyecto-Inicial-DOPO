@@ -148,19 +148,11 @@ public class Robot {
     }
 
     /**
-     * To order an array of stores based on their location using bubble sort.
-     * @param stores
+     * Returns the total profit (collected tenges) of the robot.
+     * @return profit in tenges
      */
-    public static void ordenarStores(Store[] stores) {
-        int n = stores.length;
-        for (int i = 0; i < n - 1; i++) {
-            for (int j = 0; j < n - i - 1; j++) {
-                if (stores[j].getLocation() > stores[j + 1].getLocation()) {
-                    Store temp = stores[j];
-                    stores[j] = stores[j + 1];
-                    stores[j + 1] = temp;
-                    }
-                }
-            }
+    public int getProfit() {
+        int totalProfit = this.collectedTenges - this.distanceTraveled;
+        return totalProfit;
     }
 }
