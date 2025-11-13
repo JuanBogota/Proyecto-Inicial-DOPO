@@ -22,7 +22,7 @@ public class TenderRobot extends Robot {
      *
      * @return a string representing the default color, which is "yellow".
      */
-    protected String getDefaultColor() {
+    private String getDefaultColor() {
         return "yellow"; 
     }
 

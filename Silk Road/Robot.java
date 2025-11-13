@@ -1,6 +1,6 @@
 
 /**
- * Abstract class representing a robot in the Silk Road simulation.
+ * Class representing a robot in the Silk Road simulation.
  * 
  * @author Nicolas Felipe Bernal Gallo  
  * @author Juan Daniel Bogota Fuentes
@@ -8,43 +8,42 @@
  */
 public class Robot {
 
-    protected boolean isVisible;
-    protected String color;
-    protected Circle size;
-    protected int initialPosition;
-    protected int collectedTenges;
-    protected int distanceTraveled;
-    protected int location;
+    private boolean isVisible;
+    private String color;
+    private Circle size;
+    private int initialPosition;
+    private int collectedTenges;
+    private int distanceTraveled;
+    private int location;
 
     /**
-     * Constructor del robot.
-     * @param location position inicial to robot
+     * Constructs a robot at a given initial location on the road.
+     * @param location the initial position of the robot on the road
      */
     public Robot(int location) {
         this.location = location;
         this.initialPosition = location;
+        this.color = "blue";
         this.isVisible = false;
         this.size = new Circle();
         this.size.changeSize(10);
-        this.size.changeColor(color);
         this.size.makeVisible();
         this.size.moveHorizontal(location);
         this.collectedTenges = 0;
         this.distanceTraveled = 0;
     }
 
-
     /**
-     * Change the robot's color.
-     * @param newColor A new Color
+     * Changes the color of the robot in the graphical interface.
+     * @param newColor the new color for the robot
      */
-    public void changeColor(String newColor) {
+    public void changeColor(String newColor){
         this.color = newColor;
         this.size.changeColor(newColor);
     }
 
     /**
-     * The robot makes invisible.
+     * Makes the robot invisible in the graphical interface.
      */
     public void makeInvisible() {
         size.makeInvisible();
@@ -52,79 +51,75 @@ public class Robot {
     }
 
     /**
-     * It makes the robot visible.
+     * Makes the robot visible in the graphical interface.
      */
     public void makeVisible() {
         this.isVisible = true;
     }
 
     /**
-     * Reset the robot to its initial position.
+     * Resets the robot to its initial position and clears the traveled distance.
      */
     public void reboot() throws SilkRoadException {
-        if (this.location != initialPosition) {
-            int distance = initialPosition - this.location;
-            this.size.moveHorizontal(distance);
-            this.location = initialPosition;
+        if(this.location != initialPosition || this.distanceTraveled != 0 || getType().equals("neverback")){
+            throw new SilkRoadException(SilkRoadException.FAILED_REBOOT_ROBOT);
         }
+        this.location = initialPosition;
         this.distanceTraveled = 0;
     }
 
     /**
-     * Reset the collected tenges.
+     * Resets the amount of collected tenges to zero.
      */
     public void resetCollectedTenges() {
         this.collectedTenges = 0;
     }
 
     /**
-     * Move the robot a certain distance.
-     * @param meters distance to move
+     * Moves the robot one unit to the right, increases distance traveled,
+     * and decreases tenges by one.
      */
     public void moveTo(int meters) throws SilkRoadException {
         this.size.moveHorizontal(meters);
-        this.distanceTraveled += Math.abs(meters);
-        this.collectedTenges -= Math.abs(meters);
-        this.location += meters;
+        this.distanceTraveled = distanceTraveled + meters;
+        this.collectedTenges = collectedTenges - Math.abs(meters);
+        this.location = this.location + meters;
     }
 
     /**
-     * Gets the robot's current location.
-     * @return to location
+     * Returns the current position of the robot.
+     * @return current position
      */
     public int getLocation() {
         return location;
     }
 
     /**
-     * He obtains the collected tenge.
-     * @return the collected tenge
+     * Returns the amount of tenges collected during the day.
+     * @return tenges collected
      */
     public int getCollectedTenges() {
         return collectedTenges;
     }
 
     /**
-     * It obtains the distance traveled.
-     * @return the distance in meters
+     * Returns the total distance traveled during the day.
+     * @return distance in meters
      */
     public int getDistanceTraveled() {
         return distanceTraveled;
     }
     
     /**
-     * gets the robot's total profit.
-     * @return the profit
+     * Returns the total profit (collected tenges) of the robot.
+     * @return profit in tenges
      */
     public int getProfit() {
-        return this.collectedTenges;
+        int totalProfit = this.collectedTenges;
+        return totalProfit;
     }
 
-    /**
-     * Add tenges to the robot.
-     * @param tenges Number of tenge to add
-     */
-    protected void collectTenges(int tenges) {
+    public void collectTenges(int tenges) {
         this.collectedTenges += tenges;
     }
 
