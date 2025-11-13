@@ -19,6 +19,7 @@ public class Store{
     private int initialPosition;
     private int initialTenges;
     private Rectangle size;
+    private String originalColor;
     
     /**
      * Constructor of the Store class.
@@ -26,12 +27,28 @@ public class Store{
      * @param initialTenges Initial amount of tenges in the store
      */
     public Store(int initialPosition, int initialTenges){
-        this.size = new Rectangle(initialPosition, 20);
-        this.size.makeVisible();
         this.location = initialPosition;
         this.tenges = initialTenges;
+        this.initialPosition = initialPosition;
+        this.initialTenges = initialTenges;
+        this.size = new Rectangle(initialPosition, 20);
+        this.size.makeVisible();
     }
 
+
+    /**
+     * Empties the store of all tenges.
+     */
+    public void empty(){
+        this.tenges = 0;
+    }
+    
+
+    public void changeColor(String newColor){
+        this.color = newColor;
+        this.size.changeColor(newColor);
+    }
+    
     /**
      * Resupplies the store with 100 additional tenges.
      */
@@ -55,7 +72,7 @@ public class Store{
         isVisible = true;
     }
 
-        /**
+    /**
      * Returns the location of the store.
      * @return the location of the store
      */
@@ -85,6 +102,22 @@ public class Store{
      */
     public int getInitialTenges(){
         return initialTenges;
+    }
+
+    /**
+     * Returns the color of the store.
+     * @return the color of the store
+     */
+    public String getColor(){
+        return color;
+    }
+
+    /**
+     * Returns the original color of the store.
+     * @return the original color of the store
+     */
+    public String getOriginalColor(){
+        return originalColor;
     }
 
 }   

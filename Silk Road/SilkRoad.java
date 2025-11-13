@@ -210,6 +210,47 @@ public class SilkRoad {
     }
 
     /**
+     * Moves all robots towards their nearest store.
+     */
+    public void moveRobots() throws SilkRoadException {
+        lastOperationOk = false;
+        try {
+            for(Robot robot : robots) {
+                Store bestStore = findBestStoreForRobot(robot);
+                if(bestStore != null) {
+                    int distance = bestStore.getLocation() - robot.getLocation();
+                    moveRobot(robot.getLocation(), distance);
+                }
+            }
+            lastOperationOk = true;
+        } catch(Exception e) {
+            throw new SilkRoadException(SilkRoadException.ROBOT_MOVEMENT_FAILED);
+        }
+    }
+
+    /**
+     * Finds the best store for a robot to visit based on profit.
+     * @param robot the robot for which to find the best store
+     * @return the best store for the robot
+     */
+    private Store findBestStoreForRobot(Robot robot) {
+        Store bestStore = null;
+        int maxProfit = 0;
+
+        for(Store store : stores) {
+            if(store.getTenges() > 0){
+                int distance = Math.abs(store.getLocation() - robot.getLocation());
+                int profit = store.getTenges() - distance;
+                if(profit > maxProfit) {
+                    maxProfit = profit;
+                    bestStore = store;
+                }
+            }
+        }
+        return bestStore;
+    }
+
+    /**
      * Moves a robot at a given location by a specified number of meters.
      * @param location the position of the robot to be moved
      * @param meters the number of meters to move the robot
@@ -288,6 +329,59 @@ public class SilkRoad {
             totalProfit += robot.getProfit();
         }
         return totalProfit;
+    }
+
+    /**
+     * Returns a 2D array with the location and number of times each store has been emptied.
+     * @return a 2D array with emptied store data
+     */
+    public int[][] emptiedStores(){
+        Store[] storeArray = new Store[stores.size()];
+        stores.toArray(storeArray);
+        orderStores(storeArray);
+        int[][] result = new int[storeArray.length][2];
+        for(int i = 0; i < storeArray.length; i++){
+            int location = storeArray[i].getLocation();
+            result[i][0] = location;
+            result[i][1] = storeEmptiedCount.getOrDefault(location, 0);
+        }
+        return result;
+    }
+
+    /**
+     * Returns the profit per move for each robot.
+     * Robots are sorted by initial location in ascending order.
+     * @return a 2D array where first column is initial location,
+     * subsequent columns show profit after each move
+     */
+    public int[][] profitPerMove() {
+        Robot[] robotArray = new Robot[robots.size()];
+        robots.toArray(robotArray);
+
+        orderRobots(robotArray);
+        
+        int maxMoves = 0;
+        for(ArrayList<Integer> profits : robotProfitPerMove.values()) {
+            if(profits.size() > maxMoves) {
+                maxMoves = profits.size();
+            }
+        }
+
+        int[][] result = new int[robotArray.length][maxMoves + 1];
+        
+        for(int i = 0; i < robotArray.length; i++) {
+            int initialLocation = robotArray[i].getLocation();
+            result[i][0] = initialLocation;
+            
+            ArrayList<Integer> profits = robotProfitPerMove.get(initialLocation);
+            if(profits != null) {
+                for(int j = 0; j < profits.size(); j++) {
+                    result[i][j + 1] = profits.get(j);
+                }
+            }
+        }
+        
+        return result;
     }
 
     /**
