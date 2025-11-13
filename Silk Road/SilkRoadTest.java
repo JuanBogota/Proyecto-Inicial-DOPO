@@ -23,7 +23,6 @@ public class SilkRoadTest {
         silkRoad = new SilkRoad(10);
     }
 
- 
     // ========== Test de PlaceStore ==========
     
     /**
@@ -372,8 +371,7 @@ public class SilkRoadTest {
         assertEquals(originalLength, silkRoad.getLength());
     }
 
-       /**
-     * Tears down the test fixture.
+    /**
      * Called after every test case method.
      */
     @After
