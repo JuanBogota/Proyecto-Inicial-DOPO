@@ -1,7 +1,7 @@
 import static org.junit.Assert.*;
 import java.util.ArrayList;
 import org.junit.After;
-import org.junit.Beparae;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -18,7 +18,7 @@ public class SilkRoadC2Test {
      * Sets up the test fixture.
      * Called beparae every test case method.
      */
-    @Beparae
+    @Before
     public void setUp() {
         silkRoad = new SilkRoad(100);
     }
@@ -87,7 +87,7 @@ public class SilkRoadC2Test {
     @Test
     public void testPlaceRobotShouldRejectDuplicateLocation() {
         silkRoad.placeRobot(30);
-        silkRoad.placeRobot(30); // same location
+        silkRoad.placeRobot(30);
         assertFalse(silkRoad.ok());
         assertEquals(1, silkRoad.getRobots().size());
     }
@@ -124,7 +124,6 @@ public class SilkRoadC2Test {
         silkRoad.placeRobot(20);
         silkRoad.placeStore(30, 50);
         silkRoad.moveRobot(20, 10);
-        // Robot should have moved (implementation dependent)
         assertNotNull(silkRoad.getRobots());
     }
 
@@ -290,7 +289,6 @@ public class SilkRoadC2Test {
         int[][] emptied = silkRoad.emptiedStores();
         
         assertEquals(3, emptied.length);
-        // Should be sorted by location
         assertTrue(emptied[0][0] < emptied[1][0]);
         assertTrue(emptied[1][0] < emptied[2][0]);
     }
@@ -318,7 +316,6 @@ public class SilkRoadC2Test {
         int[][] profits = silkRoad.profitPerMove();
         
         assertEquals(3, profits.length);
-        // Should be sorted by location
         assertTrue(profits[0][0] < profits[1][0]);
         assertTrue(profits[1][0] < profits[2][0]);
     }
@@ -346,7 +343,6 @@ public class SilkRoadC2Test {
         int[][] storeData = silkRoad.stores();
         
         assertEquals(3, storeData.length);
-        // Should be sorted by location
         assertEquals(30, storeData[0][0]);
         assertEquals(50, storeData[1][0]);
         assertEquals(70, storeData[2][0]);
@@ -375,7 +371,6 @@ public class SilkRoadC2Test {
         int[][] robotData = silkRoad.robots();
         
         assertEquals(3, robotData.length);
-        // Should be sorted by location
         assertEquals(20, robotData[0][0]);
         assertEquals(50, robotData[1][0]);
         assertEquals(80, robotData[2][0]);
@@ -486,7 +481,7 @@ public class SilkRoadC2Test {
      */
     @Test
     public void testOkShouldReturnFalseAfterFailedOperation() {
-        silkRoad.placeRobot(200); // invalid location
+        silkRoad.placeRobot(200);
         assertFalse(silkRoad.ok());
     }
 
