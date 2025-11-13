@@ -1,7 +1,7 @@
 
 /**
  * Clase que representa una tienda en la Ruta de la Seda
- * Maneja la ubicación, cantidad de tenges y representación visual
+ * Maneja la ubicacion, cantidad de tenges y representacion visual
  * 
  * @author Nicolas Felipe Bernal Gallo
  * @author Juan Daniel Bogota Fuentes
@@ -13,24 +13,20 @@ public class Store{
     private int tenges;
     private boolean isVisible;
     private String color;
-    private int initialPosition;
     private int initialTenges;
     private Rectangle size;
-    private String originalColor;
     
     /**
      * Constructor of the Store class.
-     * @param initialPosition Initial position of the store
+     * @param position Initial position of the store
      * @param initialTenges Initial amount of tenges in the store
      */
-    public Store(int initialPosition, int initialTenges){
-        this.location = initialPosition;
+    public Store(int position, int initialTenges){
+        this.location = position;
         this.tenges = initialTenges;
-        this.initialPosition = initialPosition;
-        this.initialTenges = initialTenges;
         this.color = "green";
-        this.originalColor = this.color;
-        this.size = new Rectangle(initialPosition, 20);
+        this.size = new Rectangle(position, 20);
+        this.size.changeSize(10, 10);
         this.size.makeVisible();
     }
 
@@ -40,8 +36,8 @@ public class Store{
      */
     public void empty(){
         this.tenges = 0;
+        changeColor("gray");
     }
-    
 
     public void changeColor(String newColor){
         this.color = newColor;
@@ -91,14 +87,6 @@ public class Store{
     }
 
     /**
-     * Returns the initial position of the store.
-     * @return the initial position of the store
-     */
-    public int getInitialPosition(){
-        return initialPosition;
-    }
-
-    /**
      * Returns the initial amount of tenges in the store.
      * @return the initial amount of tenges
      */
@@ -112,14 +100,6 @@ public class Store{
      */
     public String getColor(){
         return color;
-    }
-
-    /**
-     * Returns the original color of the store.
-     * @return the original color of the store
-     */
-    public String getOriginalColor(){
-        return originalColor;
     }
 
 }   

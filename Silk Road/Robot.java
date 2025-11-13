@@ -18,13 +18,13 @@
  */
 public class Robot {
 
-    private int location;
     private boolean isVisible;
     private String color;
     private Circle size;
     private int initialPosition;
     private int collectedTenges;
     private int distanceTraveled;
+    private int location;
 
     /**
      * Constructs a robot at a given initial location on the road.
@@ -32,11 +32,13 @@ public class Robot {
      */
     public Robot(int location) {
         this.location = location;
+        this.initialPosition = location;
         this.color = "blue";
         this.isVisible = false;
         this.size = new Circle();
+        this.size.changeSize(10);
         this.size.makeVisible();
-        this.initialPosition = location;
+        this.size.moveHorizontal(location);
         this.collectedTenges = 0;
         this.distanceTraveled = 0;
     }
@@ -88,12 +90,10 @@ public class Robot {
      * and decreases tenges by one.
      */
     public void moveTo(int meters) throws SilkRoadException {
-        if (this.collectedTenges <= 0) {
-            throw new SilkRoadException(SilkRoadException.DOES_NOT_HAVE_ENOUGH_TENGES);
-        }
-        this.location = meters;
-        this.distanceTraveled += 1;
-        this.collectedTenges -= 1;
+        this.size.moveHorizontal(meters);
+        this.distanceTraveled = distanceTraveled + meters;
+        this.collectedTenges = collectedTenges - Math.abs(meters);
+        this.location = this.location + meters;
     }
 
     /**
@@ -125,7 +125,11 @@ public class Robot {
      * @return profit in tenges
      */
     public int getProfit() {
-        int totalProfit = this.collectedTenges - this.distanceTraveled;
+        int totalProfit = this.collectedTenges;
         return totalProfit;
+    }
+
+    public void collectTenges(int tenges) {
+        this.collectedTenges += tenges;
     }
 }
