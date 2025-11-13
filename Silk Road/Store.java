@@ -1,7 +1,6 @@
 
 /**
- * Clase que representa una tienda en la Ruta de la Seda
- * Maneja la ubicacion, cantidad de tenges y representacion visual
+ * Class Store represents a store in the Silk Road simulation.
  * 
  * @author Nicolas Felipe Bernal Gallo
  * @author Juan Daniel Bogota Fuentes
@@ -29,7 +28,6 @@ public class Store{
         this.size.changeSize(10, 10);
         this.size.makeVisible();
     }
-
 
     /**
      * Empties the store of all tenges.
@@ -102,5 +100,21 @@ public class Store{
         return color;
     }
 
+    /**
+     * Determines if a robot can take tenges from this store.
+     * @param robot the robot trying to take tenges
+     * @return false by default, to be overridden in subclasses
+     */
+    public boolean canRobotTake(Robot robot) {
+        return false;
+    }
+
+    /**
+     * Returns the type of the store.
+     * @return the type of the store
+     */
+    public String getType() {
+        return "normal";
+    }
 }   
 
