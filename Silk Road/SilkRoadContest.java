@@ -73,7 +73,6 @@ import java.util.ArrayList;
             return;
         }
         
-        // Encontrar la ubicación máxima
         int maxLocation = 0;
         for (int[] day : days) {
             if (day != null && day.length >= 2 && day[1] > maxLocation) {
@@ -92,35 +91,29 @@ import java.util.ArrayList;
             }
             
             System.out.print("Día " + (i + 1) + ": ");
-            
-            // ANTES de agregar, resuppliar y retornar
+
             if (i > 0) {
                 road.resupplyStores();
                 road.returnRobots();
             }
             
-            // Agregar robot o tienda
             if (day[0] == 1 && day.length >= 2) {
                 road.placeRobot(day[1]);
                 System.out.print("Agregar Robot en posición " + day[1]);
             } else if (day[0] == 2 && day.length >= 3) {
                 road.placeStore(day[1], day[2]);
-                System.out.print("Agregar Tienda en posición " + day[1] + 
-                            " con " + day[2] + " tenges");
+                System.out.print("Agregar Tienda en posición " + day[1] + " con " + day[2] + " tenges");
             }
             
-            // Mover los robots
             try {
                 road.moveRobots();
             } catch (SilkRoadException e) {
-                // Ignorar excepción
             }
-            
-            // Mostrar resultado
+        
             int profit = road.porfit();
-            System.out.println(" -> Ganancia Máxima: " + profit);
+            System.out.println("Ganancia Máxima: " + profit);
             
-            System.out.println("  Robots: " + road.getRobots().size() + 
+            System.out.println(" Robots: " + road.getRobots().size() + 
                             ", Tiendas: " + road.getStores().size());
             System.out.println();
         }
