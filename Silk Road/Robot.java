@@ -119,6 +119,10 @@ public class Robot {
         return totalProfit;
     }
 
+    /**
+     * Collects tenges for the robot.
+     * @param tenges amount to add
+     */
     public void collectTenges(int tenges) {
         this.collectedTenges += tenges;
     }
