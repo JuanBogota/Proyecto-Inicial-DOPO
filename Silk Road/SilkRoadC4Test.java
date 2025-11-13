@@ -10,7 +10,7 @@ import org.junit.Test;
  * @author Nicolas Felipe Bernal Gallo
  * @version 1.0
  */
-public class SilkRoadC2Test {
+public class SilkRoadC4Test {
 
     private SilkRoad silkRoad;
 
@@ -44,6 +44,58 @@ public class SilkRoadC2Test {
         silkRoad.placeStore(150, 100); // location > length
         assertFalse(silkRoad.ok());
         assertEquals(0, silkRoad.getStores().size());
+    }
+
+    // ========== Pruebas para NormalStore ==========
+    
+    /**
+     * Test that NormalStore allows any robot to take tenges.
+     */
+    @Test
+    public void testNormalStoreShouldAllowAnyRobotToTake() {
+        silkRoad.placeStore("normal", 50, 100);
+        silkRoad.placeRobot("normal", 30);
+        
+        Robot robot = silkRoad.getRobots().get(0);
+        Store store = silkRoad.getStores().get(0);
+        
+        assertTrue(store.canRobotTake(robot));
+        assertEquals("normal", store.getType());
+    }
+
+    // ========== Pruebas para FighterStore ==========
+    
+    /**
+     * Test that FighterStore only allows rich robots to take tenges.
+     */
+    @Test
+    public void testFighterStoreShouldOnlyAllowRichRobots() {
+        silkRoad.placeStore("fighter", 50, 100);
+        silkRoad.placeRobot("normal", 30);
+        
+        Robot robot = silkRoad.getRobots().get(0);
+        Store store = silkRoad.getStores().get(0);
+        
+        // Robot con 0 tenges no puede tomar de tienda con 100
+        assertFalse(store.canRobotTake(robot));
+        
+        // Si el robot tiene más tenges, sí puede
+        robot.collectTenges(150);
+        assertTrue(store.canRobotTake(robot));
+    }
+
+    // ========== Pruebas para AutonomousStore ==========
+    
+    /**
+     * Test that AutonomousStore is created correctly.
+     */
+    @Test
+    public void testAutonomousStoreShouldBeCreated() {
+        silkRoad.placeStore("autonomous", 50, 100);
+        
+        assertEquals(1, silkRoad.getStores().size());
+        Store store = silkRoad.getStores().get(0);
+        assertEquals("autonomous", store.getType());
     }
 
     // ========== Test para removeStore ==========
@@ -81,15 +133,72 @@ public class SilkRoadC2Test {
         assertEquals(30, silkRoad.getRobots().get(0).getLocation());
     }
 
+     // ========== Pruebas para NormalRobot ==========
+
     /**
-     * Test that placeRobot rejects duplicate location.
+     * Test that NormalRobot returns to its initial position.
      */
     @Test
-    public void testPlaceRobotShouldRejectDuplicateLocation() {
-        silkRoad.placeRobot(30);
-        silkRoad.placeRobot(30);
-        assertFalse(silkRoad.ok());
-        assertEquals(1, silkRoad.getRobots().size());
+    public void testNormalRobotShouldReturnToInitialPosition() throws SilkRoadException {
+        silkRoad.placeRobot("normal", 30);
+        Robot robot = silkRoad.getRobots().get(0);
+        
+        int initialPos = robot.getLocation();
+        robot.moveTo(20);
+        assertEquals(50, robot.getLocation());
+        
+        robot.reboot();
+        assertEquals(initialPos, robot.getLocation());
+    }
+
+    /**
+     * Test that NormalRobot takes all tenges from store.
+     */
+    @Test
+    public void testNormalRobotShouldTakeAllTenges() {
+        silkRoad.placeRobot("normal", 30);
+        silkRoad.placeStore("normal", 30, 100);
+        
+        Robot robot = silkRoad.getRobots().get(0);
+        Store store = silkRoad.getStores().get(0);
+        
+        robot.collectFrom(store);
+        assertEquals(100, robot.getCollectedTenges());
+        assertEquals(0, store.getTenges());
+    }
+
+    // ========== Pruebas para NeverBackRobot ==========
+
+    /**
+     * Test that NeverBackRobot does not return to its initial position.
+     */
+    @Test
+    public void testNeverBackRobotShouldNotReturnToInitialPosition() throws SilkRoadException {
+        silkRoad.placeRobot("neverback", 30);
+        Robot robot = silkRoad.getRobots().get(0);
+        
+        robot.moveTo(20);
+        int newPos = robot.getLocation();
+        
+        robot.reboot();
+        assertEquals(newPos, robot.getLocation());
+    }
+
+    // ========== Pruebas para TenderRobot ==========
+
+    /**
+     * Test that TenderRobot takes half tenges from store.
+     */
+    @Test
+    public void testTenderRobotShouldTakeHalfTenges() {
+        silkRoad.placeRobot("tender", 30);
+        silkRoad.placeStore("normal", 30, 100);
+        
+        Robot robot = silkRoad.getRobots().get(0);
+        Store store = silkRoad.getStores().get(0);
+        
+        robot.collectFrom(store);
+        assertEquals(50, robot.getCollectedTenges()); // Mitad de 100
     }
 
     // ========== Test para removeRobot ==========

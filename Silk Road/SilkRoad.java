@@ -158,6 +158,32 @@ public class SilkRoad {
     }
 
     /**
+     * Places a store of a given type at a specified location with tenges.
+     * @param type the type of store ("normal" or "autonomous" or "fighter")
+     * @param location the position of the store on the road
+     * @param tenges the initial amount of tenges in the store
+     */
+    public void placeStore(String type, int location, int tenges){
+        lastOperationOk = false;
+        if (location >= 0 && location <= length && tenges >= 0) {
+            String color = getNextStoreColor();
+            Store store;
+            if(type.equals("normal")){
+                store = new NormalStore(location, tenges);
+            } else if(type.equals("autonomous")){
+                store = new AutonomousStore(tenges, length);
+            } else if(type.equals("fighter")){
+                store = new FighterStore(location, tenges);
+            } else {
+                return;
+            }
+            store.changeColor(color);
+            stores.add(store);
+            lastOperationOk = true;
+        }
+    }
+
+    /**
      * Removes a store at a given location.
      * @param location the position of the store to be removedd
      */
@@ -189,6 +215,40 @@ public class SilkRoad {
             if (!positionOccupied) {
                 String color = getNextRobotColor();
                 Robot robot = new Robot(location);
+                robot.changeColor(color);
+                robots.add(robot);
+                lastOperationOk = true;
+            }
+        }
+    }
+
+    /**
+     * Places a robot of a given type at a specified location.
+     * @param type the type of robot ("normal")
+     * @param location the position of the robot on the road
+     */
+    public void placeRobot(String type, int location){
+        lastOperationOk = false;
+        if (location >= 0 && location <= length) {
+            boolean positionOccupied = false;
+            for(Robot robot : robots) {
+                if(robot.getLocation() == location) {
+                    positionOccupied = true;
+                    break;
+                }
+            }
+            if (!positionOccupied) {
+                String color = getNextRobotColor();
+                Robot robot;
+                if(type.equals("normal")){
+                    robot = new NormalRobot(location);
+                } else if(type.equals("neverBack")){
+                    robot = new NeverbackRobot(location);
+                } else if(type.equals("tender")){
+                    robot = new TenderRobot(location);
+                } else{
+                    return;
+                }
                 robot.changeColor(color);
                 robots.add(robot);
                 lastOperationOk = true;
