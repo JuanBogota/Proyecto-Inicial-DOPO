@@ -8,7 +8,6 @@ public class Road{
 
 
     private Rectangle street;
-    private Rectangle line;
     private int xPosition;
     private int yPosition;
     private boolean isVisible;
@@ -24,9 +23,6 @@ public class Road{
         int streetWidth = street.getWidth();
         int streetXPosition = street.getXPosition();
         int streetYPosition = street.getYPosition();
-        line =  new Rectangle(((streetHeight - 20)/2) + streetXPosition, ((streetWidth - 8)/2) + streetYPosition);
-        line.changeSize(8, 20);
-        line.changeColor("yellow");
     }
         
     /**
@@ -35,7 +31,6 @@ public class Road{
     private void draw() {
         if(isVisible) {
             street.makeVisible();
-            line.makeVisible();
         }
     }
 
@@ -45,7 +40,6 @@ public class Road{
     private void erase() {
         if(isVisible) {
             street.makeInvisible();
-            line.makeInvisible();
         }
     }
 
@@ -72,15 +66,6 @@ public class Road{
     public Rectangle getStreet() {
         return street;
     }
-
-    /**
-     * Returns the rectangle representing the line on the road.
-     * @return the line on the road
-     */
-    public Rectangle getLine() {
-        return line;
-    }
-
 
     /**
      * Move the road vertically by a specified distance.
@@ -114,10 +99,6 @@ public class Road{
         int streetWidth = street.getWidth();
         int streetXPosition = street.getXPosition();
         int streetYPosition = street.getYPosition();
-        int lineHeight = line.getHeight();
-        int lineWidth = line.getWidth();
-        line.changeSize(lineWidth, lineHeight);
-        line.chagePosition(((streetHeight - 8)/2) + streetXPosition,((streetWidth - 20)/2) + streetYPosition);
         draw();
     }
 }

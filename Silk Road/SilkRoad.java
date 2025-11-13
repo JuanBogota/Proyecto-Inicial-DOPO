@@ -218,10 +218,11 @@ public class SilkRoad {
         lastOperationOk = false;
         try {
             for(Robot robot : robots) {
-                Store bestStore = findBestStoreForRobot(robot);
+                Store bestStore = findNearStoreForRobot(robot);
                 if(bestStore != null) {
                     int distance = bestStore.getLocation() - robot.getLocation();
                     moveRobot(robot.getLocation(), distance);
+                    stealTenges();
                 }
             }
             lastOperationOk = true;
@@ -253,6 +254,37 @@ public class SilkRoad {
     }
 
     /**
+     * Finds the best store for a robot to visit based on profit.
+     * @param robot the robot for which to find the best store
+     * @return the best store for the robot
+     */
+    private  Store findNearStoreForRobot(Robot robot) {
+        Store nearestStore = null;
+        int minDistance = Integer.MAX_VALUE;
+
+        for(Store store : stores) {
+            if(store.getTenges() > 0){
+                int distance = Math.abs(store.getLocation() - robot.getLocation());
+                if(distance < minDistance) {
+                    minDistance = distance;
+                    nearestStore = store;
+                }
+            }
+        }
+        return nearestStore;
+    }
+
+    public Store test(){
+        Store store = null;
+        for(Robot robot : robots) {
+                Store bestStore = findBestStoreForRobot(robot);
+                store = bestStore;
+        }
+        
+        return store;
+    }
+
+    /**
      * Moves a robot at a given location by a specified number of meters.
      * @param location the position of the robot to be moved
      * @param meters the number of meters to move the robot
@@ -264,10 +296,32 @@ public class SilkRoad {
                 try {
                     robot.moveTo(meters);
                     lastOperationOk = true;
+                    stealTenges();
                 } catch (SilkRoadException e) {
                     System.out.println("Error: " + e.getMessage());
                 }
-                break;
+            } else{
+                try {
+                    throw new SilkRoadException(SilkRoadException.ROBOT_NOT_FOUND);
+                } catch (SilkRoadException e) {
+                    System.out.println("Error: " + e.getMessage());
+                } break;
+            }
+        }
+    }
+
+    /**
+     * Steals tenges from stores when robots reach them.
+     */
+    private void stealTenges(){
+        for(Robot robot : robots){
+            for(Store store : stores){
+                if(robot.getLocation() == store.getLocation() && store.getTenges() > 0){
+                    robot.collectTenges(store.getTenges());
+                    int location = store.getLocation();
+                    storeEmptiedCount.put(location, storeEmptiedCount.getOrDefault(location, 0) + 1);
+                    store.empty();
+                }
             }
         }
     }

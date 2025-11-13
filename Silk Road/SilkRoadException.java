@@ -15,7 +15,7 @@ public class SilkRoadException extends Exception{
     public static final String FINISH_FAILED = "Failed to finish the day properly.";
     public static final String FAILDED_RESUPPLY = "Failed to resupply the store";
     public static final String FAILED_REBOOT_ROBOT = "Failed to reboot the roboot";
-    
+    public static final String DONT_HAVE_DAY = "No have days to simulate"; 
     
     /**
      * Constructor for objects of class SilkRoadException

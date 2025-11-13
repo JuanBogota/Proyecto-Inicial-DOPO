@@ -6,9 +6,9 @@ import org.junit.Test;
 
 /**
  * Unit Test para the SilkRoad class - Cycle 2.
- * @author Juan Daniel Bogotá Fuentes
- * @author Nicolás Felipe Bernal Gallo
- * @version 2.0
+ * @author Juan Daniel Bogota Fuentes
+ * @author Nicolas Felipe Bernal Gallo
+ * @version 1.0
  */
 public class SilkRoadC2Test {
 
@@ -120,7 +120,7 @@ public class SilkRoadC2Test {
      * Test that moveRobot moves a robot correctly.
      */
     @Test
-    public void testMoveRobotShouldMoveRobotSuccessfully() {
+    public void testMoveRobotShouldMoveRobotSuccessfully() throws SilkRoadException {
         silkRoad.placeRobot(20);
         silkRoad.placeStore(30, 50);
         silkRoad.moveRobot(20, 10);
@@ -131,7 +131,7 @@ public class SilkRoadC2Test {
      * Test that moveRobot does nothing when robot doesn't exist.
      */
     @Test
-    public void testMoveRobotShouldFailWhenRobotNotFound() {
+    public void testMoveRobotShouldFailWhenRobotNotFound() throws SilkRoadException {
         silkRoad.moveRobot(20, 10);
         assertFalse(silkRoad.ok());
     }
