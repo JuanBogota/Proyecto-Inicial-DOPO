@@ -1,8 +1,8 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
- * Clase que representa la Ruta de la Seda
- * Maneja los robots y las tiendas en la ruta
+ * Class representing the Silk Road simulation.
  * 
  * @author Nicolas Felipe Bernal Gallo
  * @author Juan Daniel Bogota Fuentes
@@ -18,12 +18,17 @@ public class SilkRoad {
     private boolean lastOperationOk;
     private int robotColorIndex;
     private int storeColorIndex;
+    private HashMap<Integer, Integer> storeEmptiedCount;
+    private HashMap<Integer, ArrayList<Integer>> robotProfitPerMove;
     private static final String[] COLORS = {
-        "red", "black", "blue", "green", "yellow", "orange", "cyan", "magenta", "grey", "white"
+        "red", "blue", "green", "yellow", "orange", "cyan", "magenta", "grey", "white"
     };
+    private static final String EMPTY_STORE_COLOR = "black";
+
 
     /**
     * Constructor for objects of class SilkRoad
+    * @param length Length of the Silk Road
     */
     public SilkRoad(int length){
         robots = new ArrayList<Robot>();
@@ -33,7 +38,48 @@ public class SilkRoad {
         this.days = 0;
         this.robotColorIndex = 0;
         this.storeColorIndex = 0;
+        this.storeEmptiedCount = new HashMap<Integer,Integer>();
+        this.robotProfitPerMove = new HashMap<Integer,ArrayList<Integer>>();
         generateRoadSpiral();
+    }
+
+    /**
+     * Constructor for objects of class SilkRoad from marathon input format.
+     * Processes an array of actions where each action can be:
+     * [1, location]: add robot at location
+     * [2, location, tenges]: add store at location with tenges
+     * 
+     * @param actions array of actions in marathon format
+     */
+    public SilkRoad(int[][] days){
+        robots = new ArrayList<Robot>();
+        stores = new ArrayList<Store>();
+        roads = new ArrayList<Road>();
+        this.days = 0;
+        this.robotColorIndex = 0;
+        this.storeColorIndex = 0;
+        this.storeEmptiedCount = new HashMap<Integer, Integer>();
+        this.robotProfitPerMove = new HashMap<Integer, ArrayList<Integer>>();
+        int maxLocation = 0;
+        for (int[] day : days) {
+            if (day.length >= 2 && day[1] > maxLocation) {
+                maxLocation = day[1];
+            }
+        }
+        this.length = maxLocation;
+        generateRoadSpiral();
+        for (int[] day : days) {
+            if(day[0] == 1 && day.length >= 2) {
+                placeRobot(day[1]);
+            } else if(day[0] == 2 && day.length >= 3) {
+                placeStore(day[1], day[2]);
+            }
+            if(this.days > 0) {
+                resupplyStores();
+                returnRobots();
+            }
+            this.days++;
+        }
     }
     
     /**
@@ -75,7 +121,7 @@ public class SilkRoad {
         }
     }
 
-        /**
+    /**
      * Gets the next color for a robot.
      * @return the next available color
      */
@@ -97,7 +143,6 @@ public class SilkRoad {
 
     /**
      * Places a store at a given location with a specified amount of tenges.
-     * 
      * @param location the position of the store on the road
      * @param tenges the initial amount of tenges in the store
      */
@@ -113,9 +158,7 @@ public class SilkRoad {
 
     /**
      * Removes a store at a given location.
-     * 
-     * @param location the position of the store to be removed
-     * @param tenges the amount of tenges in the store to be removed
+     * @param location the position of the store to be removedd
      */
     public void removeStore(int location) {
         lastOperationOk = false;
@@ -130,7 +173,6 @@ public class SilkRoad {
 
     /**
      * Places a robot at a given location on the Silk Road.
-     * 
      * @param location the position of the robot on the road
      */
     public void placeRobot(int location) {
@@ -177,15 +219,12 @@ public class SilkRoad {
         for(Robot robot : robots) {
             if(robot.getLocation() == location) {
                 try {
-                    for(int i = 0; i < Math.abs(meters); i++) {
-                        robot.moveTo();
-                    }
+                    robot.moveTo(meters);
                     lastOperationOk = true;
-                    break;
-                } catch(SilkRoadException e) {
+                } catch (SilkRoadException e) {
                     System.out.println("Error al mover el robot: " + e.getMessage());
-                    break;
                 }
+                break;
             }
         }
     }
@@ -212,7 +251,7 @@ public class SilkRoad {
         lastOperationOk = false;
         try {
             for(Robot robot : robots) {
-                robot.rebootRobot();
+                robot.reboot();
             }
             lastOperationOk = true;
         } catch(Exception e) {
@@ -221,13 +260,13 @@ public class SilkRoad {
     }
 
     /**
-     * Reboots all robots to their initial positions
+     * Reboots the Silk Road simulation to its initial state
      */
     public void reboot() {
         lastOperationOk = false;
         try {
             for(Robot robot : robots) {
-                robot.rebootRobot();
+                robot.reboot();
                 robot.resetCollectedTenges();
             }
             for(Store store : stores) {
@@ -241,6 +280,7 @@ public class SilkRoad {
 
     /**
      * Calculates the profits for all robots on the Silk Road
+     * @return total profit from all robots
      */
     public int porfit(){
         int totalProfit = 0;
@@ -255,10 +295,16 @@ public class SilkRoad {
      * @return a 2D array with store data
      */
     public int[][] stores(){
-        int[][] storeData = new int[stores.size()][2];
-        for(int i = 0; i < stores.size(); i++){
-            storeData[i][0] = stores.get(i).getLocation();
-            storeData[i][1] = stores.get(i).getTenges();
+        Store[] storeArray = new Store[stores.size()];
+        stores.toArray(storeArray);
+
+        orderStores(storeArray);
+
+        int[][] storeData = new int[storeArray.length][2];
+        for(int i = 0; i < storeArray.length; i++){
+            storeData[i][0] = storeArray[i].getLocation();
+            storeData[i][1] = storeArray[i].getTenges();
+
         }
         return storeData;
     }   
@@ -268,27 +314,19 @@ public class SilkRoad {
      * @return a 2D array with robot data
      */
     public int[][] robots(){
-        int[][] robotData = new int[robots.size()][2];
-        for(int i = 0; i < robots.size(); i++){
-            robotData[i][0] = robots.get(i).getLocation();
-            robotData[i][1] = robots.get(i).getProfit();
+
+        Robot[] robotArray = new Robot[robots.size()];
+        robots.toArray(robotArray);
+
+        orderRobots(robotArray);
+
+
+        int[][] robotData = new int[robotArray.length][2];
+        for(int i = 0; i < robotArray.length; i++){
+            robotData[i][0] = robotArray[i].getLocation();
+            robotData[i][1] = robotArray[i].getCollectedTenges() - robotArray[i].getDistanceTraveled();
         }
         return robotData;
-    }
-
-    /**
-     * Makes all robots and stores invisible.
-     */
-    public void makeInvisible(){
-        for(Robot robot : robots){
-            robot.makeInvisible();
-        }
-        for(Store store : stores){
-            store.makeInvisible();
-        }
-        for(Road road : roads){
-            road.makeInvisible();
-        }
     }
 
     /**
@@ -303,6 +341,21 @@ public class SilkRoad {
         }
         for(Road road : roads){
             road.makeVisible();
+        }
+    }
+
+    /**
+     * Makes all robots and stores invisible.
+     */
+    public void makeInvisible(){
+        for(Robot robot : robots){
+            robot.makeInvisible();
+        }
+        for(Store store : stores){
+            store.makeInvisible();
+        }
+        for(Road road : roads){
+            road.makeInvisible();
         }
     }
 
@@ -363,5 +416,39 @@ public class SilkRoad {
      */
     public int getLength(){
         return length;
+    }
+
+    /**
+     * Sorts an array of robots by their current location in ascending order.
+     * @param robots array of robots to sort
+     */
+    private static void orderRobots(Robot[] robots) {
+        int n = robots.length;
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = 0; j < n - i - 1; j++) {
+                if (robots[j].getLocation() > robots[j + 1].getLocation()) {
+                    Robot temp = robots[j];
+                    robots[j] = robots[j + 1];
+                    robots[j + 1] = temp;
+                }
+            }
+        }
+    }
+
+    /**
+     * To order an array of stores based on their location in ascending order.
+     * @param stores
+     */
+    private static void orderStores(Store[] stores) {
+        int n = stores.length;
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = 0; j < n - i - 1; j++) {
+                if (stores[j].getLocation() > stores[j + 1].getLocation()) {
+                    Store temp = stores[j];
+                    stores[j] = stores[j + 1];
+                    stores[j + 1] = temp;
+                    }
+                }
+            }
     }
 }

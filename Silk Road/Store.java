@@ -21,10 +21,9 @@ public class Store{
     private Rectangle size;
     
     /**
-     * Constructor de la tienda
-     * 
-     * @param initialPosition Posición inicial de la tienda en la ruta
-     * @param initialTenges Cantidad inicial de tenges en la tienda
+     * Constructor of the Store class.
+     * @param initialPosition Initial position of the store
+     * @param initialTenges Initial amount of tenges in the store
      */
     public Store(int initialPosition, int initialTenges){
         this.size = new Rectangle(initialPosition, 20);
@@ -34,6 +33,29 @@ public class Store{
     }
 
     /**
+     * Resupplies the store with 100 additional tenges.
+     */
+    public void resupply(){
+        this.tenges = initialTenges;
+    }
+
+    /**
+     * Make this store invisible.
+     */
+    public void makeInvisible(){
+        size.makeInvisible();
+        isVisible = false;
+    }
+
+    /**
+     * Make this store visible.
+     */
+    public void makeVisible(){
+        size.makeVisible();
+        isVisible = true;
+    }
+
+        /**
      * Returns the location of the store.
      * @return the location of the store
      */
@@ -64,56 +86,6 @@ public class Store{
     public int getInitialTenges(){
         return initialTenges;
     }
-
-    /**
-     * Resupplies the store with 100 additional tenges.
-     */
-    public void resupply(){
-        this.tenges += 100;
-    }
-
-    /**
-     * Make this store invisible.
-     */
-    public void makeInvisible(){
-        size.makeInvisible();
-        isVisible = false;
-    }
-
-    /**
-     * Make this store visible.
-     */
-    public void makeVisible(){
-        size.makeVisible();
-        isVisible = true;
-    }
-
-    /**
-     * Reboots the store to its initial position and tenges.
-     */
-    public void rebootStore(){
-        this.location = initialPosition;
-        this.tenges = initialTenges;
-    }
-
-    
-    /**
-     * To order an array of stores based on their location using bubble sort.
-     * @param stores
-     */
-    public static void ordenarStores(Store[] stores) {
-        int n = stores.length;
-        for (int i = 0; i < n - 1; i++) {
-            for (int j = 0; j < n - i - 1; j++) {
-                if (stores[j].getLocation() > stores[j + 1].getLocation()) {
-                    Store temp = stores[j];
-                    stores[j] = stores[j + 1];
-                    stores[j + 1] = temp;
-                    }
-                }
-            }
-    }
-
 
 }   
 
