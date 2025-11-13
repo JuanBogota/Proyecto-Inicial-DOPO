@@ -169,7 +169,7 @@ public class SilkRoad {
             String color = getNextStoreColor();
             Store store;
             if(type.equals("normal")){
-                store = new NormalStore(location, tenges);
+                store = new Store(location, tenges);
             } else if(type.equals("autonomous")){
                 store = new AutonomousStore(tenges, length);
             } else if(type.equals("fighter")){
@@ -241,7 +241,7 @@ public class SilkRoad {
                 String color = getNextRobotColor();
                 Robot robot;
                 if(type.equals("normal")){
-                    robot = new NormalRobot(location);
+                    robot = new Robot(location);
                 } else if(type.equals("neverBack")){
                     robot = new NeverbackRobot(location);
                 } else if(type.equals("tender")){

@@ -1,8 +1,8 @@
 /**
- * Write a description of class Road here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
+ * Class Road - represents a road segment in the Silk Road simulation.
+ * @author Juan Daniel Bogota Fuentes
+ * @author Nicolas Felipe Bernal Gallo
+ * @version 1.0
  */
 public class Road{
 

@@ -10,7 +10,7 @@ import org.junit.Test;
  * @author Nicolas Felipe Bernal Gallo
  * @version 1.0
  */
-public class SilkRoadC4Test {
+public class SilkRoadC2Test {
 
     private SilkRoad silkRoad;
 
@@ -41,44 +41,9 @@ public class SilkRoadC4Test {
      */
     @Test
     public void testPlaceStoreShouldRejectInvalidLocation() {
-        silkRoad.placeStore(150, 100);
+        silkRoad.placeStore(150, 100); // location > length
         assertFalse(silkRoad.ok());
         assertEquals(0, silkRoad.getStores().size());
-    }
-    
-    // ========== Pruebas para FighterStore ==========
-    
-    /**
-     * Test that FighterStore only allows rich robots to take tenges.
-     */
-    @Test
-    public void testFighterStoreShouldOnlyAllowRichRobots() {
-        silkRoad.placeStore("fighter", 50, 100);
-        silkRoad.placeRobot("normal", 30);
-        
-        Robot robot = silkRoad.getRobots().get(0);
-        Store store = silkRoad.getStores().get(0);
-        
-        // Robot con 0 tenges no puede tomar de tienda con 100
-        assertFalse(store.canRobotTake(robot));
-        
-        // Si el robot tiene más tenges, sí puede
-        robot.collectTenges(150);
-        assertTrue(store.canRobotTake(robot));
-    }
-
-    // ========== Pruebas para AutonomousStore ==========
-    
-    /**
-     * Test that AutonomousStore is created correctly.
-     */
-    @Test
-    public void testAutonomousStoreShouldBeCreated() {
-        silkRoad.placeStore("autonomous", 50, 100);
-        
-        assertEquals(1, silkRoad.getStores().size());
-        Store store = silkRoad.getStores().get(0);
-        assertEquals("autonomous", store.getType());
     }
 
     // ========== Test para removeStore ==========
@@ -116,21 +81,15 @@ public class SilkRoadC4Test {
         assertEquals(30, silkRoad.getRobots().get(0).getLocation());
     }
 
-    // ========== Pruebas para NeverBackRobot ==========
-
     /**
-     * Test that NeverBackRobot does not return to its initial position.
+     * Test that placeRobot rejects duplicate location.
      */
     @Test
-    public void testNeverBackRobotShouldNotReturnToInitialPosition() throws SilkRoadException {
-        silkRoad.placeRobot("neverback", 30);
-        Robot robot = silkRoad.getRobots().get(0);
-        
-        robot.moveTo(20);
-        int newPos = robot.getLocation();
-        
-        robot.reboot();
-        assertEquals(newPos, robot.getLocation());
+    public void testPlaceRobotShouldRejectDuplicateLocation() {
+        silkRoad.placeRobot(30);
+        silkRoad.placeRobot(30);
+        assertFalse(silkRoad.ok());
+        assertEquals(1, silkRoad.getRobots().size());
     }
 
     // ========== Test para removeRobot ==========
@@ -214,7 +173,7 @@ public class SilkRoadC4Test {
     }
 
     // ========== Test para resupplyStores ==========
-
+    
     /**
      * Test that resupplyStores works when no stores exist.
      */
@@ -252,7 +211,7 @@ public class SilkRoadC4Test {
     }
 
     // ========== Test para reboot ==========
-
+    
     /**
      * Test that reboot works with empty road.
      */
