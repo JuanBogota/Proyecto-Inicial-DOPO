@@ -1,6 +1,3 @@
-import java.util.List;
-import java.util.Collections;
-import java.util.Comparator;
 
 /**
  * Clase que representa una tienda en la Ruta de la Seda
@@ -31,6 +28,8 @@ public class Store{
         this.tenges = initialTenges;
         this.initialPosition = initialPosition;
         this.initialTenges = initialTenges;
+        this.color = "green";
+        this.originalColor = this.color;
         this.size = new Rectangle(initialPosition, 20);
         this.size.makeVisible();
     }
@@ -52,7 +51,10 @@ public class Store{
     /**
      * Resupplies the store with 100 additional tenges.
      */
-    public void resupply(){
+    public void resupply() throws SilkRoadException {
+        if(this.tenges != initialTenges){
+            throw new SilkRoadException(SilkRoadException.FAILDED_RESUPPLY);
+        }
         this.tenges = initialTenges;
     }
 

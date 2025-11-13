@@ -1,6 +1,3 @@
-import java.util.List;
-import java.util.Collections;
-import java.util.Comparator;
 
 /**
  * Class representing a robot in the Silk Road simulation.
@@ -44,7 +41,15 @@ public class Robot {
         this.distanceTraveled = 0;
     }
 
-    
+    /**
+     * Changes the color of the robot in the graphical interface.
+     * @param newColor the new color for the robot
+     */
+    public void changeColor(String newColor){
+        this.color = newColor;
+        this.size.changeColor(newColor);
+    }
+
     /**
      * Makes the robot invisible in the graphical interface.
      */
@@ -63,7 +68,10 @@ public class Robot {
     /**
      * Resets the robot to its initial position and clears the traveled distance.
      */
-    public void reboot() {
+    public void reboot() throws SilkRoadException {
+        if(this.location != initialPosition || this.distanceTraveled != 0){
+            throw new SilkRoadException(SilkRoadException.FAILED_REBOOT_ROBOT);
+        }
         this.location = initialPosition;
         this.distanceTraveled = 0;
     }

@@ -151,6 +151,7 @@ public class SilkRoad {
         if (location >= 0 && location <= length && tenges >= 0) {
             String color = getNextStoreColor();
             Store store = new Store(location, tenges);
+            store.changeColor(color);
             stores.add(store);
             lastOperationOk = true;
         }
@@ -188,6 +189,7 @@ public class SilkRoad {
             if (!positionOccupied) {
                 String color = getNextRobotColor();
                 Robot robot = new Robot(location);
+                robot.changeColor(color);
                 robots.add(robot);
                 lastOperationOk = true;
             }
@@ -223,8 +225,8 @@ public class SilkRoad {
                 }
             }
             lastOperationOk = true;
-        } catch(Exception e) {
-            throw new SilkRoadException(SilkRoadException.ROBOT_MOVEMENT_FAILED);
+        } catch(SilkRoadException e) {
+            System.out.println("Error: " + e.getMessage());
         }
     }
 
@@ -255,7 +257,7 @@ public class SilkRoad {
      * @param location the position of the robot to be moved
      * @param meters the number of meters to move the robot
      */
-    public void moveRobot(int location, int meters) {
+    public void moveRobot(int location, int meters) throws SilkRoadException {
         lastOperationOk = false;
         for(Robot robot : robots) {
             if(robot.getLocation() == location) {
@@ -263,7 +265,7 @@ public class SilkRoad {
                     robot.moveTo(meters);
                     lastOperationOk = true;
                 } catch (SilkRoadException e) {
-                    System.out.println("Error al mover el robot: " + e.getMessage());
+                    System.out.println("Error: " + e.getMessage());
                 }
                 break;
             }
@@ -280,8 +282,8 @@ public class SilkRoad {
                 store.resupply();
             }
             lastOperationOk = true;
-        } catch(Exception e) {
-            System.out.println("Error al reabastecer las tiendas: " + e.getMessage());
+        } catch(SilkRoadException e) {
+            System.out.println("Error: " + e.getMessage());
         }
     }   
 
@@ -295,8 +297,8 @@ public class SilkRoad {
                 robot.reboot();
             }
             lastOperationOk = true;
-        } catch(Exception e) {
-            System.out.println("Error al retornar los robots: " + e.getMessage());
+        } catch(SilkRoadException e) {
+            System.out.println("Error: " + e.getMessage());
         }
     }
 
@@ -314,8 +316,8 @@ public class SilkRoad {
                 store.resupply();
             }
             lastOperationOk = true;
-        } catch(Exception e) {
-            System.out.println("Error al reiniciar el sistema: " + e.getMessage());
+        } catch(SilkRoadException e) {
+            System.out.println("Error: " + e.getMessage());
         }
     }
 
@@ -468,7 +470,7 @@ public class SilkRoad {
             storeColorIndex = 0;
             lastOperationOk = true;
         } catch(Exception e) {
-            System.out.println("Error al finalizar el simulador: " + e.getMessage());
+            System.out.println("Error: " + e.getMessage());
         }
     }
 
