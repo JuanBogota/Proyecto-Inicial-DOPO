@@ -28,4 +28,36 @@ El problema describe una carretera ficticia inspirada en la Ruta de la Seda, don
 - Antes de cada día, los robots regresan a su posición inicial y las tiendas se reabastecen.
 
 El objetivo es determinar, **para cada día**, la **máxima ganancia posible**, definida como:
+ganancia = tenges recolectados − distancia recorrida
+
+---
+
+## 🎯 Objetivo del proyecto
+
+El objetivo del **Proyecto Inicial** es aplicar los principios básicos de la **programación orientada a objetos**, tales como:
+
+- Encapsulamiento  
+- Abstracción  
+- Herencia  
+- Polimorfismo  
+- Organización modular del código  
+
+así como introducir buenas prácticas de diseño y documentación mediante **diagramas UML**.
+
+---
+
+## 🧠 Conceptos trabajados
+
+Durante el desarrollo de este proyecto se abordan los siguientes temas:
+
+- Diseño orientado por objetos
+- Modelado de clases con UML
+- Relación entre clases
+- Manejo de excepciones
+- Organización de paquetes
+- Pruebas básicas
+- Versionamiento de código con Git
+
+---
+
 
